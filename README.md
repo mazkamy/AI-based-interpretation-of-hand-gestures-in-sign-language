@@ -32,7 +32,7 @@ We used a custom Arabic Sign Language dataset of isolated and continuous sign vi
 
 Below is the accuracy comparison of various architectures tested on our dataset:
 
-![Model Accuracy Table](images/comparison_table.png)
+![Model Accuracy Table](images/model_comparison.png)
 
 ---
 
@@ -52,7 +52,17 @@ Our best-performing model combined geometric descriptors and CNN-based visual fe
 
 📊 Here's a graph of the architecture:
 
-![Dual Stream Architecture](images/model_arch.png)
+![Dual Stream Architecture](images/dual_stream_architecture.png)
+
+---
+## 📈 Best Model Accuracy Graphs
+
+Below are the training and validation accuracy curves of the best-performing model (Zernike + EfficientNet with attentional fusion):
+
+### 🔹 ACCURACY, F1 SCORE, PRECISION, LOSS over epochs
+
+![metrics Graph](images/model_graphs.png)
+
 
 ---
 

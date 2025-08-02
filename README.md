@@ -11,9 +11,9 @@ This project presents a complete Arabic Sign Language (ArSL) recognition system 
 
 - 📊 A **comparative study** of various architectures (CNN, BiLSTM, Transformer).
 - 🧼 Novel **image preprocessing** using:
-  - **Shape functions** (6 measurement functions)
-  - **Zernike moments** on binary segmented hands
-  - **EfficientNetB0** features on RGB hand images
+  - **size functions** (6 measurement functions)
+  - **Zernike moments** on size function 2d representation
+  - **EfficientNetB0** features on segmmented hand images
 - 🔀 A **dual-stream model**:
   - Stream 1: BiLSTM on Zernike-moment-based shape functions.
   - Stream 2: Transformer on EfficientNet features.

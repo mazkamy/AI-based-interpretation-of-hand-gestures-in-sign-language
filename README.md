@@ -28,13 +28,84 @@ We used a custom Arabic Sign Language dataset of isolated and continuous sign vi
 
 ---
 
-## 🧪 Model Comparison
+## 🧠 Model Architectures and Comparative Study
 
-Below is the accuracy comparison of various architectures tested on our dataset:
+This project investigates various deep learning architectures for Arabic Sign Language Recognition. We focus on frame-level feature extraction using shape descriptors (moments and size functions), and explore their integration into sequence models such as CNNs, BiLSTMs, and Transformers.
 
-![Model Accuracy Table](images/model_comparison.png)
+### 🧪 Models Evaluated
+
+We conducted a comparative study of multiple architectures, each leveraging hand-segmented images and geometric preprocessing:
 
 ---
+
+#### 📌 1. CNN + Zernike Moments
+- **Input**: Zernike moment features extracted from binary hand images.
+- **Model**: Shallow convolutional network with fully connected layers.
+- **Strengths**: Fast inference and good performance on static signs.
+- **Limitations**: Struggles with temporal dynamics or subtle hand motion.
+
+---
+
+#### 📌 2. BiLSTM on Moment Sequences
+- **Input**: Sequences of Zernike or Tchebichef moments extracted per frame.
+- **Model**: Bidirectional LSTM to capture temporal dependencies.
+- **Strengths**: Better suited for continuous gestures and longer word signs.
+- **Limitations**: Lower accuracy when shape features alone are insufficient.
+
+---
+
+#### 📌 3. CNN + Size Function Images
+- **Input**: Heatmap-like images generated using geometric size functions (e.g., centroid, axis distance).
+- **Model**: CNN classifier trained directly on these diagrams.
+- **Strengths**: Captures shape deformations more robustly.
+- **Limitations**: Limited temporal modeling.
+
+---
+
+#### 📌 4. BiLSTM on Size Function Descriptors
+- **Input**: Feature vectors built from 6 different geometric size functions across hand contours.
+- **Model**: BiLSTM sequence model.
+- **Strengths**: Strong representation of geometric transformations.
+- **Limitations**: Still lacks learned visual features.
+
+---
+
+#### 📌 5. Transformer on EfficientNet Features
+- **Input**: Visual embeddings from EfficientNetB0 applied to hand-segmented frames.
+- **Model**: Transformer encoder for temporal modeling.
+- **Strengths**: Learns high-level spatio-temporal patterns.
+- **Limitations**: Requires large dataset for training stability.
+
+---
+
+#### 🏆 6. Dual-Stream Fusion Model (Best Model)
+- **Input**:  
+  - **Stream 1**: Zernike moments computed on size function diagrams for each hand.  
+  - **Stream 2**: EfficientNet features from the raw segmented hand images.
+- **Architecture**:  
+  - BiLSTM for Stream 1 (shape features)  
+  - Transformer for Stream 2 (visual features)  
+  - Attention-based fusion of both streams.
+- **Strengths**: Combines low-level geometric shape info with high-level CNN features.
+- **Result**: **Achieved the highest accuracy** across all tested models.
+
+### 🧾 Summary Table
+
+| Model                          | Input Type                  | Architecture             | 
+|--------------------------------|-----------------------------|--------------------------|
+| CNN + Zernike Moments          | Shape Moments               | CNN                      |
+| BiLSTM + Moment Sequences      | Moment Vectors (per frame)  | BiLSTM                   | 
+| CNN + Size Function Diagrams   | Geometric Heatmaps          | CNN                      | 
+| BiLSTM + Size Function Features| Size Function Descriptors   | BiLSTM                   | 
+| Transformer + EfficientNet     | Visual Embeddings           | Transformer              |
+| Dual-Stream (Best)             | Moments + Visual Features   | BiLSTM + Transformer + Attention | 
+
+![Accuracy Comparison Table](images/accuracy_table.png)
+
+---
+
+You can find detailed training curves and model files in the `/models` folder.
+
 
 ## 🏆 Best Performing Model Architecture
 

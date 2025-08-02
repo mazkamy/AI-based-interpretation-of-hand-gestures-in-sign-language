@@ -1,9 +1,15 @@
 # 🤟 Arabic Sign Language Recognition System
 
-This project presents a complete Arabic Sign Language (ArSL) recognition system with two major components:
+This project delivers a complete Arabic Sign Language (ArSL) recognition system, consisting of two key components:
 
-1. **A deep learning-based sign recognition model** trained using a novel combination of geometric and CNN-based features.
-2. **An educational Flutter mobile app** that allows users to explore, learn, and translate Arabic sign language.
+- 🧠 **Deep Learning Recognition Model**  
+  A state-of-the-art sign recognition system trained using a novel fusion of handcrafted geometric descriptors (e.g., Zernike moments from size functions) and deep CNN features (EfficientNet). The model leverages **BiLSTMs** and **Transformer encoders** to capture both temporal dynamics and spatial structure across video sequences. This hybrid approach improves robustness under challenging conditions such as low video quality, background noise, and signer variability.
+
+- 📱 **Flutter Mobile Application**  
+  A modern, educational mobile app built with Flutter. It allows users to **learn**, **explore**, and **translate** Arabic signs interactively. Features include video browsing by category or signer, gesture playback, a translation interface powered by the trained model, and user-friendly tools like favorites and search.
+
+Together, these components form a powerful and accessible platform for learning and recognizing Arabic Sign Language using cutting-edge machine learning techniques.
+
 
 ---
 

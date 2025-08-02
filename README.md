@@ -28,79 +28,112 @@ We used a custom Arabic Sign Language dataset of isolated and continuous sign vi
 
 ---
 
-## 🧠 Model Architectures and Comparative Study
+## 🧠 Models Comparison
 
-This project investigates various deep learning architectures for Arabic Sign Language Recognition. We focus on frame-level feature extraction using shape descriptors (moments and size functions), and explore their integration into sequence models such as CNNs, BiLSTMs, and Transformers.
-
-### 🧪 Models Evaluated
-
-We conducted a comparative study of multiple architectures, each leveraging hand-segmented images and geometric preprocessing:
+In this project, we designed and compared several models to evaluate the contribution of **Size Functions** to sign language recognition. All models share a common **Transformer encoder**, and differ mainly in how they represent hand gestures and incorporate morphological descriptors.
 
 ---
 
-#### 📌 1. CNN + Zernike Moments
-- **Input**: Zernike moment features extracted from binary hand images.
-- **Model**: Shallow convolutional network with fully connected layers.
-- **Strengths**: Fast inference and good performance on static signs.
-- **Limitations**: Struggles with temporal dynamics or subtle hand motion.
+### 📍 Model 1 – Landmark-Based Model
+
+**Input:** Hand landmarks (MediaPipe – 21 keypoints per hand)  
+**Architecture:**  
+- Landmark sequences → Transformer encoder → Classifier
+
+**Description:**  
+This model uses only the (x, y) coordinates of hand keypoints extracted using MediaPipe. By focusing purely on geometry, it is highly lightweight and robust to noise, lighting, and background variations.
+
+**Pros:**
+- Very fast and efficient
+- Robust to appearance-based noise
+- Ideal for embedded systems
 
 ---
 
-#### 📌 2. BiLSTM on Moment Sequences
-- **Input**: Sequences of Zernike or Tchebichef moments extracted per frame.
-- **Model**: Bidirectional LSTM to capture temporal dependencies.
-- **Strengths**: Better suited for continuous gestures and longer word signs.
-- **Limitations**: Lower accuracy when shape features alone are insufficient.
+### 🖼️ Model 2 – Segmented Image Model
+
+**Input:** Binary segmented images of both hands  
+**Architecture:**  
+- Image → EfficientNet-B0 → Feature vectors → Transformer → Classifier
+
+**Description:**  
+This model processes segmented binary images of hands to extract visual features using EfficientNet. It captures the overall appearance and silhouette of gestures, such as hand posture and relative positions.
+
+**Pros:**
+- Simple and effective baseline
+- Leverages CNN power for spatial patterns
+- Less sensitive to color and lighting
 
 ---
 
-#### 📌 3. CNN + Size Function Images
-- **Input**: Heatmap-like images generated using geometric size functions (e.g., centroid, axis distance).
-- **Model**: CNN classifier trained directly on these diagrams.
-- **Strengths**: Captures shape deformations more robustly.
-- **Limitations**: Limited temporal modeling.
+### 🧩 Model 3 – Segmented Image + Tchebichef Moments
+
+**Input:** Binary segmented images of hands  
+**Architecture:**  
+- EfficientNet features + Tchebichef moments → Concatenation → Transformer → Classifier
+
+**Description:**  
+In this configuration, we combine visual descriptors (EfficientNet) with explicit shape descriptors (Tchebichef moments) extracted from the same binary images. This enriched feature vector enhances discrimination between similar-looking gestures.
+
+**Pros:**
+- Stronger shape representation
+- Improves over visual-only models
+- Still computationally manageable
 
 ---
 
-#### 📌 4. BiLSTM on Size Function Descriptors
-- **Input**: Feature vectors built from 6 different geometric size functions across hand contours.
-- **Model**: BiLSTM sequence model.
-- **Strengths**: Strong representation of geometric transformations.
-- **Limitations**: Still lacks learned visual features.
+### 🌀 Model 4 – Segmented Image + Zernike Moments (Size Function Diagrams)
+
+**Input:**  
+- Binary hand images → EfficientNet  
+- Size function diagram images → Zernike moments (order 8)
+
+**Architecture:**  
+- Flow 1: EfficientNet → Transformer  
+- Flow 2: Zernike → BiLSTM  
+- Combined via Cross-Attention → Classifier
+
+**Description:**  
+This dual-stream model merges visual features with shape descriptors (Zernike moments) extracted from size function diagram images. The two streams are fused using a cross-attention mechanism that allows dynamic visual features to query structural information.
+
+**Pros:**
+- Best performing architecture
+- Fuses appearance and shape intelligently
+- Robust to noise and gesture variability
 
 ---
 
-#### 📌 5. Transformer on EfficientNet Features
-- **Input**: Visual embeddings from EfficientNetB0 applied to hand-segmented frames.
-- **Model**: Transformer encoder for temporal modeling.
-- **Strengths**: Learns high-level spatio-temporal patterns.
-- **Limitations**: Requires large dataset for training stability.
+### 📈 Model 5 – Segmented Image + Point Descriptors (Hu or Tchebichef Moments)
+
+**Input:**  
+- Binary hand images → EfficientNet  
+- Size function points → Hu or Tchebichef moments
+
+**Architecture:**  
+- EfficientNet features + Hu/Tchebichef moments → Concatenation → Transformer → Classifier
+
+**Description:**  
+Here, shape moments are calculated directly from point-based size functions, bypassing image diagrams. It’s a single-stream model with concatenated visual and shape features at each frame, making it lighter than dual-stream architectures.
+
+**Pros:**
+- Computationally efficient
+- Strong shape modeling
+- Good performance for real-time use
 
 ---
 
-#### 🏆 6. Dual-Stream Fusion Model (Best Model)
-- **Input**:  
-  - **Stream 1**: Zernike moments computed on size function diagrams for each hand.  
-  - **Stream 2**: EfficientNet features from the raw segmented hand images.
-- **Architecture**:  
-  - BiLSTM for Stream 1 (shape features)  
-  - Transformer for Stream 2 (visual features)  
-  - Attention-based fusion of both streams.
-- **Strengths**: Combines low-level geometric shape info with high-level CNN features.
-- **Result**: **Achieved the highest accuracy** across all tested models.
+### 🧪 Summary Table
 
-### 🧾 Summary Table
+| **Model** | **Input Type** | **Descriptor Type** | **Fusion** | **Notes** |
+|-----------|----------------|---------------------|------------|------------|
+| Landmark-Based | Landmarks (x, y) | Spatial keypoints | None | Fastest, robust, minimal features |
+| Segmented Image | Hand masks | EfficientNet visual features | None | Strong baseline for visual learning |
+| Image + Tchebichef | Hand masks | EfficientNet + Tchebichef | Concatenation | Improved shape encoding |
+| Image + Zernike | Hand masks + Size Function Diagrams | EfficientNet + Zernike | Dual-stream w/ Cross-Attention | Best performance |
+| Image + Points | Hand masks + Size Function Points | EfficientNet + Hu/Tchebichef | Concatenation | Lightweight, efficient, good shape fidelity |
 
-| Model                          | Input Type                  | Architecture             | 
-|--------------------------------|-----------------------------|--------------------------|
-| CNN + Zernike Moments          | Shape Moments               | CNN                      |
-| BiLSTM + Moment Sequences      | Moment Vectors (per frame)  | BiLSTM                   | 
-| CNN + Size Function Diagrams   | Geometric Heatmaps          | CNN                      | 
-| BiLSTM + Size Function Features| Size Function Descriptors   | BiLSTM                   | 
-| Transformer + EfficientNet     | Visual Embeddings           | Transformer              |
-| Dual-Stream (Best)             | Moments + Visual Features   | BiLSTM + Transformer + Attention | 
 
-![Accuracy Comparison Table](images/accuracy_table.png)
+![Accuracy Comparison Table](images/comparison_table.png)
 
 ---
 

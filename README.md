@@ -102,9 +102,4 @@ MIT License. Feel free to use and modify for research or educational purposes.
 
 We welcome contributions and improvements! If you find bugs, want to add new features, or improve documentation, feel free to fork and submit a pull request.
 
----
-
-## 📬 Contact
-
-For questions or collaborations, reach out via [your email/contact info here].
 

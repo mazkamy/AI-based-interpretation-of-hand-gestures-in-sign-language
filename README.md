@@ -132,13 +132,10 @@ Here, shape moments are calculated directly from point-based size functions, byp
 | Image + Zernike | Hand masks + Size Function Diagrams | EfficientNet + Zernike | Dual-stream w/ Cross-Attention | Best performance |
 | Image + Points | Hand masks + Size Function Points | EfficientNet + Hu/Tchebichef | Concatenation | Lightweight, efficient, good shape fidelity |
 
-
+###Comparison table of the different models accuracies :
 ![Accuracy Comparison Table](images/comparison_table.png)
 
 ---
-
-You can find detailed training curves and model files in the `/models` folder.
-
 
 ## 🏆 Best Performing Model Architecture
 
@@ -156,7 +153,7 @@ Our best-performing model combined geometric descriptors and CNN-based visual fe
 
 📊 Here's a graph of the architecture:
 
-![Dual Stream Architecture](images/dual_stream_architecture.png)
+![Dual Stream Architecture](images/model_arch.png)
 
 ---
 ## 📈 Best Model Accuracy Graphs
